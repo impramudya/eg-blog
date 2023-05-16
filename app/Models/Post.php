@@ -22,7 +22,15 @@ class Post extends Model
             return $query->whereHas('category', function($query) use ($category) {
                 $query->where('slug', $category);
             });
+
+            
         });
+
+        $query->when($filters['author'] ?? false, fn($query, $author) =>
+            $query->whereHas('author', fn($query) =>
+                $query->where('username', $author)
+            )
+        );
     }
 
     public function category()
@@ -34,4 +42,10 @@ class Post extends Model
     {
         return $this->BelongsTo(User::class, 'user_id');
     }
+
+    public function getRouteKeyName(): string
+{
+    return 'slug';
+}
+
 }
